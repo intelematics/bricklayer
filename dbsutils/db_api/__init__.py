@@ -2,7 +2,7 @@ import pathlib
 from databricks_cli.workspace.api import WorkspaceApi 
 from databricks_cli.sdk import ApiClient
 
-class DBApi(object):
+class DBSApi(object):
 
     def __init__(
         self,
