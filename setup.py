@@ -5,7 +5,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setuptools.setup(
     name="dbricks_utils",
-    version="0.0.0.1",
+    version="0.0.0",
     author="Intelematics",
     description="Databricks utils",
     long_description=long_description,
