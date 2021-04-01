@@ -31,14 +31,15 @@ help:
 
 env-file:
 	# populating build/env
-	@rm -f env
-	@echo "IMAGE_NAME=${IMAGE_NAME}" >> env
-	@echo "ECR_URL=${ECR_URL}" >> env
-	@echo "MAJOR=${SEMVER_MAJOR}" >> env
-	@echo "MINOR=${SEMVER_MINOR}" >> env
-	@echo "PATCH=${SEMVER_PATCH}" >> env
-	@echo "GIT_COMMIT=${GIT_COMMIT}" >> env
-	cat env
+	@rm -f build/env
+	@echo "IMAGE_NAME=${IMAGE_NAME}" >> build/env
+	@echo "ECR_URL=${ECR_URL}" >> build/env
+	@echo "MAJOR=${SEMVER_MAJOR}" >> build/env
+	@echo "MINOR=${SEMVER_MINOR}" >> build/env
+	@echo "PATCH=${SEMVER_PATCH}" >> build/env
+	@echo "GIT_COMMIT=${GIT_COMMIT}" >> build/env
+	cat build/env
+	cp build/env build/docker/.env
 
 clean:
 	rm -rf env dist/* dbricks_utils.*
