@@ -31,7 +31,6 @@ help:
 
 env-file:
 	# populating build/env
-	@mkdir build
 	@rm -f build/env
 	@echo "IMAGE_NAME=${IMAGE_NAME}" >> build/env
 	@echo "ECR_URL=${ECR_URL}" >> build/env

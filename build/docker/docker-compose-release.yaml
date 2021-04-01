@@ -1,0 +1,33 @@
+version: '3.4'
+
+x-build:
+  &build
+  dockerfile: build/docker/Dockerfile
+  context: ../..
+
+services:
+  ecr_v_patch:
+    build:
+      <<: *build
+      target: base
+    image: ${ECR_URL}/${IMAGE_NAME}:${MAJOR}.${MINOR}.${PATCH}
+  ecr_v_commit:
+    build:
+      <<: *build
+      target: base
+    image: ${ECR_URL}/${IMAGE_NAME}:${MAJOR}.${MINOR}-${GIT_COMMIT}
+  ecr_v_minor:
+    build:
+      <<: *build
+      target: base
+    image: ${ECR_URL}/${IMAGE_NAME}:${MAJOR}.${MINOR}
+  ecr_v_major:
+    build:
+      <<: *build
+      target: base
+    image: ${ECR_URL}/${IMAGE_NAME}:${MAJOR}
+  ecr_v_latest:
+    build:
+      <<: *build
+      target: base
+    image: ${ECR_URL}/${IMAGE_NAME}:latest
