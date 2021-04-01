@@ -9,3 +9,5 @@ pipeline {
                 sh 'make publish-release'
             }
         }
+    }
+}
