@@ -13,26 +13,21 @@
 """
 
 import pathlib
+
 from databricks_cli.workspace.api import WorkspaceApi 
 from databricks_cli.jobs.api import JobsApi
 from databricks_cli.sdk import ApiClient
 
-from . import notebook_ctx
 
 class DBSApi(object):
 
     def __init__(
         self,
-        token=None,
-        host=None,
+        token,
+        host='https://intelematics-dac-dev.cloud.databricks.com',
         apiVersion='2.0',
     ):
-        if token is None:
-            token = dbutils.secrets.get(scope="api", key="token")
-        
-        if host is None:
-            host = notebook_ctx.current_ctx().browser_host_name
-
+       
         self._client = client=ApiClient(
                             host=host,
                             apiVersion=apiVersion,
@@ -46,7 +41,7 @@ class DBSApi(object):
                 source_path, 
                 target_path,
                 fmt,
-                is_overwrite=False
+                is_overwrite
             )
         )
 
