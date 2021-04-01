@@ -49,13 +49,21 @@ ecr-login:
 build: env-file
 	python setup.py sdist bdist_wheel
 
-publish-dev: ecr-login env-file
+publish-dev: env-file
+	$(eval export WHL_CLI_TAG := $(IMAGE_NAME)_dev_whl_cli)
+	docker build --target whl-cli --tag $(WHL_CLI_TAG) --file build/docker/Dockerfile .
+	mkdir -p dist/
+	docker cp `docker create $(WHL_CLI_TAG)`:/opt/utils/${PACKAGE_WHL} ${PACKAGE_WHL}
 	echo "Uploading ${PACKAGE_WHL} to ${PACKAGE_WHL_DEV_PATCH}"
 	aws s3 cp ${PACKAGE_WHL} ${PACKAGE_WHL_DEV_PATCH}
 	echo "Uploading ${PACKAGE_WHL} to ${PACKAGE_WHL_DEV_LATEST}"
 	aws s3 cp ${PACKAGE_WHL} ${PACKAGE_WHL_DEV_LATEST}
 
-publish-release: ecr-login env-file
+publish-release: env-file
+	$(eval export WHL_CLI_TAG := $(IMAGE_NAME)_dev_whl_cli)
+	docker build --target whl-cli --tag $(WHL_CLI_TAG) --file build/docker/Dockerfile .
+	mkdir -p dist/
+	docker cp `docker create $(WHL_CLI_TAG)`:/opt/utils/${PACKAGE_WHL} ${PACKAGE_WHL}
 	echo "Uploading ${PACKAGE_WHL} to ${PACKAGE_WHL_REL_PATCH}"
 	aws s3 cp ${PACKAGE_WHL} ${PACKAGE_WHL_REL_PATCH}
 	echo "Uploading ${PACKAGE_WHL} to ${PACKAGE_WHL_REL_LATEST}"
