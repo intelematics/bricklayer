@@ -17,6 +17,8 @@ PACKAGE_WHL_REL_PATCH=${S3_PKG_REL_PREFIX}/${IMAGE_NAME}-${SEMVER_MAJOR}.${SEMVE
 PACKAGE_WHL_DEV_LATEST=${S3_PKG_DEV_PREFIX}/${IMAGE_NAME}-latest-py3-none-any.whl
 PACKAGE_WHL_REL_LATEST=${S3_PKG_REL_PREFIX}/${IMAGE_NAME}-latest-py3-none-any.whl
 
+# short commit hash
+GIT_COMMIT=`git rev-parse --short HEAD`
 
 .DEFAULT_GOAL := help
 
@@ -29,31 +31,31 @@ help:
 
 env-file:
 	# populating build/env
-	@rm -f build/env
-	@echo "IMAGE_NAME=${IMAGE_NAME}" >> build/env
-	@echo "ECR_URL=${ECR_URL}" >> build/env
-	@echo "MAJOR=${SEMVER_MAJOR}" >> build/env
-	@echo "MINOR=${SEMVER_MINOR}" >> build/env
-	@echo "PATCH=${SEMVER_PATCH}" >> build/env
-	@echo "GIT_COMMIT=${GIT_COMMIT}" >> build/env
-	cat build/env
+	@rm -f env
+	@echo "IMAGE_NAME=${IMAGE_NAME}" >> env
+	@echo "ECR_URL=${ECR_URL}" >> env
+	@echo "MAJOR=${SEMVER_MAJOR}" >> env
+	@echo "MINOR=${SEMVER_MINOR}" >> env
+	@echo "PATCH=${SEMVER_PATCH}" >> env
+	@echo "GIT_COMMIT=${GIT_COMMIT}" >> env
+	cat env
 
 clean:
-	rm -rf build/ dist/ dbricks_utils.*
+	rm -rf env dist/* dbricks_utils.*
 
 ecr-login:
 	`aws ecr get-login --region ${ECR_REGION} --registry-ids ${ECR_ACCOUNT} --no-include-email`
 
-build: clean
+build: env-file
 	python setup.py sdist bdist_wheel
 
-publish-dev: ecr-login env-file build
+publish-dev: ecr-login env-file
 	echo "Uploading ${PACKAGE_WHL} to ${PACKAGE_WHL_DEV_PATCH}"
 	aws s3 cp ${PACKAGE_WHL} ${PACKAGE_WHL_DEV_PATCH}
 	echo "Uploading ${PACKAGE_WHL} to ${PACKAGE_WHL_DEV_LATEST}"
 	aws s3 cp ${PACKAGE_WHL} ${PACKAGE_WHL_DEV_LATEST}
 
-publish-release: ecr-login env-file build
+publish-release: ecr-login env-file
 	echo "Uploading ${PACKAGE_WHL} to ${PACKAGE_WHL_REL_PATCH}"
 	aws s3 cp ${PACKAGE_WHL} ${PACKAGE_WHL_REL_PATCH}
 	echo "Uploading ${PACKAGE_WHL} to ${PACKAGE_WHL_REL_LATEST}"
