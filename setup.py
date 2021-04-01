@@ -1,11 +1,14 @@
 import setuptools
 
+with open('dbricks_utils/__version__.py') as fd:
+    version = fd.read().split('=')[1].strip().strip("'")
+
 with open("README.md", "r", encoding="utf-8") as fh:
     long_description = fh.read()
 
 setuptools.setup(
     name="dbricks_utils",
-    version="0.0.0",
+    version=version,
     author="Intelematics",
     description="Databricks utils",
     long_description=long_description,
