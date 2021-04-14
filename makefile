@@ -1,14 +1,14 @@
-IMAGE_NAME=dbricks_utils
+IMAGE_NAME=bricklayer
 ECR_ACCOUNT=977887051160
 ECR_REGION=ap-southeast-2
 ECR_URL=${ECR_ACCOUNT}.dkr.ecr.ap-southeast-2.amazonaws.com
-S3_PKG_DEV_PREFIX=s3://intelematics-dac-build-development-artifacts/dbricks_utils
-S3_PKG_REL_PREFIX=s3://intelematics-dac-build-release-artifacts/dbricks_utils
+S3_PKG_DEV_PREFIX=s3://intelematics-dac-build-development-artifacts/bricklayer
+S3_PKG_REL_PREFIX=s3://intelematics-dac-build-release-artifacts/bricklayer
 
 # semantic version
-SEMVER_MAJOR:=$(shell cut -d \' -f 2 < dbricks_utils/__version__.py | cut -d . -f 1)
-SEMVER_MINOR:=$(shell cut -d \' -f 2 < dbricks_utils/__version__.py | cut -d . -f 2)
-SEMVER_PATCH:=$(shell cut -d \' -f 2 < dbricks_utils/__version__.py | cut -d . -f 3)
+SEMVER_MAJOR:=$(shell cut -d \' -f 2 < bricklayer/__version__.py | cut -d . -f 1)
+SEMVER_MINOR:=$(shell cut -d \' -f 2 < bricklayer/__version__.py | cut -d . -f 2)
+SEMVER_PATCH:=$(shell cut -d \' -f 2 < bricklayer/__version__.py | cut -d . -f 3)
 
 # build artifacts
 PACKAGE_WHL=dist/${IMAGE_NAME}-${SEMVER_MAJOR}.${SEMVER_MINOR}.${SEMVER_PATCH}-py3-none-any.whl
@@ -42,7 +42,7 @@ env-file:
 	cp build/env build/docker/.env
 
 clean:
-	rm -rf env dist/* dbricks_utils.*
+	rm -rf env dist/* bricklayer.*
 
 ecr-login:
 	`aws ecr get-login --region ${ECR_REGION} --registry-ids ${ECR_ACCOUNT} --no-include-email`
