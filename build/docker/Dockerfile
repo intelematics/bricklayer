@@ -3,7 +3,7 @@ WORKDIR /opt/utils
 
 ADD setup.py setup.py
 ADD README.md README.md
-ADD dbricks_utils dbricks_utils
+ADD bricklayer bricklayer
 RUN pip install .
 
 FROM base AS snyk-cli

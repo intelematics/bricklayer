@@ -2,19 +2,19 @@
     Wrappers for databricks_cli api and bring some sanity back with namespaces.
     Usage:
     ```
-    import DBApi
+    import DBSApi
     # export notebook
-    db = DBApi()
+    db = DBSApi()
     db.export_notebook(
-        source_path='/Repos/deploy/dac-dbs-volume-projection-validation/02_validation_notebooks/90_run_vp_6', 
-       target_path= '/dbfs/mnt/external/tmp/90_run_vp_6'
+        source_path='/Repos/deploy/dac-dbs-volume-projection-validation/02_validation_notebooks/90_run_vp_6',
+        target_path= '/dbfs/mnt/external/tmp/90_run_vp_6'
     )
     ```
 """
 
 import pathlib
 
-from databricks_cli.workspace.api import WorkspaceApi 
+from databricks_cli.workspace.api import WorkspaceApi
 from databricks_cli.jobs.api import JobsApi
 from databricks_cli.sdk import ApiClient
 
@@ -27,7 +27,7 @@ class DBSApi(object):
         host='https://intelematics-dac-dev.cloud.databricks.com',
         apiVersion='2.0',
     ):
-       
+
         self._client = client=ApiClient(
                             host=host,
                             apiVersion=apiVersion,
@@ -38,7 +38,7 @@ class DBSApi(object):
         (
             WorkspaceApi(self._client)
             .export_workspace(
-                source_path, 
+                source_path,
                 target_path,
                 fmt,
                 is_overwrite

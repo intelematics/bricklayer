@@ -1,2 +1,2 @@
-# dac-dbs-utils
-common libs for commonly used python modules in Databricks 
+# bricklayer
+Internal common libs for commonly used python modules in Databricks
