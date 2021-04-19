@@ -21,6 +21,6 @@ setuptools.setup(
     ],
     python_requires='>=3.6',
     install_requires=[
-          'databricks_cli',
+          'databricks_cli', 'shapely', 'folium'
       ]
 )
