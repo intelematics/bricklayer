@@ -26,7 +26,7 @@ class Layer():
                 radius (int): Radius of the circles used for points default is 1.
 
             Returns:
-                bool: The return value. True for success, False otherwise.
+                folium.Map: Folium map to be rendered.
         """
         dataframe = self.get_dataframe(data)
         if dataframe.empty:
