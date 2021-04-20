@@ -39,7 +39,7 @@ class Layer():
         self.weight = weight
         self.radius = radius
 
-    def get_geometry_col(self, geometry_col:str, dataframe:pd.DataFrame):
+    def get_geometry_col(self, geometry_col: str, dataframe: pd.DataFrame):
         '''Return the name of the geometry column'''
         if geometry_col is not None:
             if geometry_col not in dataframe.columns:
@@ -69,7 +69,7 @@ class Layer():
             return spark.sql(data).toPandas()
         raise NotImplementedError(f"Can't interpret data with type {type(data)}")
 
-    def get_dataframe_with_geom(self, dataframe: pd.DataFrame, geometry_col):
+    def get_dataframe_with_geom(self, dataframe: pd.DataFrame, geometry_col: str):
         '''Convert the geometry column to a shapely geometry'''
         geom = dataframe.iloc[0][geometry_col]
         if isinstance(geom, str):
@@ -79,13 +79,13 @@ class Layer():
             return dataframe
         raise ValueError(f"Invalida type for geometry_colum in the data ({type(geom)})")
 
-    def get_centroid(self, datafraame:pd.DataFrame, geometry_col:str):
+    def get_centroid(self, datafraame: pd.DataFrame, geometry_col: str):
         '''Get the centroid of all the geometries in the layer'''
         centroids = [r.centroid for _, r in datafraame[geometry_col].items()]
         multipoint = shapely.geometry.MultiPoint(centroids)
         return multipoint.centroid
 
-    def get_popup(self, row:pd.Series):
+    def get_popup(self, row: pd.Series):
         '''Get a folium pop-up with the requested attributes'''
         if isinstance(self.popup_attrs, list):
             non_geom_cols = self.popup_attrs
@@ -100,7 +100,7 @@ class Layer():
                 .to_html()
         ))
 
-    def get_map_geom(self, row):
+    def get_map_geom(self, row: pd.Series):
         '''Get folium geometry from the shapely geom'''
         sgeom = row[self.geometry_col]
         kwargs = {'color': self.color}
@@ -143,16 +143,16 @@ class Layer():
                 maxy = max(maxy, _maxy)
         return minx, miny, maxx, maxy
 
-    def render_to_map(self, map):
+    def render_to_map(self, folium_map):
         '''Render the layer into the map'''
         for _, row in self.dataframe.iterrows():
             map_geom = self.get_map_geom(row)
-            map_geom.add_to(map)
+            map_geom.add_to(folium_map)
 
 class Map():
     '''Map that can render layers'''
 
-    def __init__(self, layers, **map_args):
+    def __init__(self, layers: list, **map_args):
         self.layers = layers
         self.map_args = map_args.copy()
         self.map_args['zoom_start'] = self.map_args.get('zoom_start', 13)
@@ -180,10 +180,10 @@ class Map():
     def render(self):
         '''Render the map'''
         map_centroid  = self.get_centroid()
-        map = folium.Map(
+        folium_map = folium.Map(
             [map_centroid.y,map_centroid.x],
             **self.map_args
         )
         for layer in self.layers:
-            layer.render_to_map(map)
-        return map
+            layer.render_to_map(folium_map)
+        return folium_map
