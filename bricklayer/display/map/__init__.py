@@ -15,7 +15,8 @@ import shapely.geometry.base
 class Layer():
     ''' Layer to be rendered in the map '''
 
-    def __init__(self, data, geometry_col=None, popup_attrs=False, color='red', weight=None, radius=1):
+    def __init__(self, data, geometry_col=None, popup_attrs=False, color='red',
+                    weight=None, radius=1):
         """
             Args:
                 data (*): pandas dataframe, or a geodataframe or a spark dataframe or a databricks SQL query.
@@ -27,26 +28,26 @@ class Layer():
             Returns:
                 bool: The return value. True for success, False otherwise.
         """
-        data_frame = self.get_data_frame(data)
-        if data_frame.empty:
+        dataframe = self.get_dataframe(data)
+        if dataframe.empty:
             raise ValueError('No data to display')
-        self.geometry_col = self.get_geometry_col(geometry_col, data_frame)
-        self.data_frame = self.get_data_frame_with_geom(data_frame, self.geometry_col)
-        self.centroid = self.get_centroid(self.data_frame, self.geometry_col)
+        self.geometry_col = self.get_geometry_col(geometry_col, dataframe)
+        self.dataframe = self.get_dataframe_with_geom(dataframe, self.geometry_col)
+        self.centroid = self.get_centroid(self.dataframe, self.geometry_col)
         self.popup_attrs = popup_attrs
         self.color = color
         self.weight = weight
         self.radius = radius
 
-    def get_geometry_col(self, geometry_col:str, data_frame:pd.DataFrame):
+    def get_geometry_col(self, geometry_col:str, dataframe:pd.DataFrame):
         '''Return the name of the geometry column'''
         if geometry_col is not None:
-            if geometry_col not in data_frame.columns:
+            if geometry_col not in dataframe.columns:
                 raise ValueError(f"Column {geometry_col} not found in data columns")
             return geometry_col
         else:
             candidates = []
-            for column in data_frame.columns:
+            for column in dataframe.columns:
                 if 'geom' in column:
                     candidates.append(column)
                 elif 'geography' in column:
@@ -57,7 +58,7 @@ class Layer():
                 raise ValueError("Specify the geometry_col argument for the data")
             return candidates[0]
 
-    def get_data_frame(self, data)->pd.DataFrame:
+    def get_dataframe(self, data)->pd.DataFrame:
         '''Get the data in a pandas DataFrame'''
         if isinstance(data, pd.DataFrame):
             return data.copy()
@@ -68,19 +69,19 @@ class Layer():
             return spark.sql(data).toPandas()
         raise NotImplementedError(f"Can't interpret data with type {type(data)}")
 
-    def get_data_frame_with_geom(self, data_frame: pd.DataFrame, geometry_col):
+    def get_dataframe_with_geom(self, dataframe: pd.DataFrame, geometry_col):
         '''Convert the geometry column to a shapely geometry'''
-        geom = data_frame.iloc[0][geometry_col]
+        geom = dataframe.iloc[0][geometry_col]
         if isinstance(geom, str):
-            data_frame[geometry_col] = data_frame[geometry_col].apply(wkt.loads)
-            return data_frame
+            dataframe[geometry_col] = dataframe[geometry_col].apply(wkt.loads)
+            return dataframe
         if isinstance(geom, shapely.geometry.base.BaseGeometry):
-            return data_frame
+            return dataframe
         raise ValueError(f"Invalida type for geometry_colum in the data ({type(geom)})")
 
-    def get_centroid(self, df:pd.DataFrame, geometry_col:str):
+    def get_centroid(self, datafraame:pd.DataFrame, geometry_col:str):
         '''Get the centroid of all the geometries in the layer'''
-        centroids = [r.centroid for _, r in df[geometry_col].items()]
+        centroids = [r.centroid for _, r in datafraame[geometry_col].items()]
         multipoint = shapely.geometry.MultiPoint(centroids)
         return multipoint.centroid
 
@@ -89,7 +90,7 @@ class Layer():
         if isinstance(self.popup_attrs, list):
             non_geom_cols = self.popup_attrs
         else:
-            non_geom_cols = list(self.data_frame.columns)
+            non_geom_cols = list(self.dataframe.columns)
             non_geom_cols.remove(self.geometry_col)
 
         return folium.Popup((
@@ -131,7 +132,7 @@ class Layer():
     def get_bounds(self):
         '''Get the bounds for all the geometries'''
         minx, miny, maxx, maxy = None, None, None, None
-        geoms_bounds = self.data_frame[self.geometry_col].apply(lambda g:g.bounds)
+        geoms_bounds = self.dataframe[self.geometry_col].apply(lambda g:g.bounds)
         for _minx, _miny, _maxx, _maxy in geoms_bounds:
             if minx is None:
                 minx, miny, maxx, maxy = _minx, _miny, _maxx, _maxy
@@ -144,7 +145,7 @@ class Layer():
 
     def render_to_map(self, map):
         '''Render the layer into the map'''
-        for _, row in self.data_frame.iterrows():
+        for _, row in self.dataframe.iterrows():
             map_geom = self.get_map_geom(row)
             map_geom.add_to(map)
 
