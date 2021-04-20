@@ -15,7 +15,18 @@ import shapely.geometry.base
 class Layer():
     ''' Layer to be rendered in the map '''
 
-    def __init__(self, data, geometry_col=None, popup_attrs=False, color='red'):
+    def __init__(self, data, geometry_col=None, popup_attrs=False, color='red', weight=None, radius=1):
+        """
+            Args:
+                data (*): pandas dataframe, or a geodataframe or a spark dataframe or a databricks SQL query.
+                popup_attrs (list): the attributes used to populate a pop up, if False there will be no popup. If True it will put all the attrs.
+                color (str): Color to render the layer. Color name or RGB. (i.e. '#3388ff')
+                weight (int): Width of the stroke when rendering lines or points. By default is 1.
+                radius (int): Radius of the circles used for points default is 1.
+
+            Returns:
+                bool: The return value. True for success, False otherwise.
+        """
         data_frame = self.get_data_frame(data)
         if data_frame.empty:
             raise ValueError('No data to display')
@@ -24,6 +35,8 @@ class Layer():
         self.centroid = self.get_centroid(self.data_frame, self.geometry_col)
         self.popup_attrs = popup_attrs
         self.color = color
+        self.weight = weight
+        self.radius = radius
 
     def get_geometry_col(self, geometry_col:str, data_frame:pd.DataFrame):
         '''Return the name of the geometry column'''
@@ -86,21 +99,28 @@ class Layer():
                 .to_html()
         ))
 
-    def get_map_geom(self, row, color, html_popup):
+    def get_map_geom(self, row):
         '''Get folium geometry from the shapely geom'''
         sgeom = row[self.geometry_col]
+        kwargs = {'color': self.color}
+        if self.popup_attrs:
+            html_popup = self.get_popup(row)
+        else:
+            html_popup = None
+        if self.weight is not None:
+            kwargs['weight'] = self.weight
         if isinstance(sgeom, shapely.geometry.LineString):
             coords = [(y, x) for x,y in sgeom.coords]
             fgeom = folium.PolyLine(
                 coords,
-                color=color
+                **kwargs
             )
         elif isinstance(sgeom, shapely.geometry.Point):
+            kwargs['radius'] = self.radius
             coords = [(y, x) for x,y in sgeom.coords]
             fgeom = folium.CircleMarker(
                 coords[0],
-                radius=1,
-                color=self.color
+                **kwargs
             )
         else:
             raise NotImplementedError(f'Geometry Type not Supported {type(sgeom)}')
@@ -125,11 +145,7 @@ class Layer():
     def render_to_map(self, map):
         '''Render the layer into the map'''
         for _, row in self.data_frame.iterrows():
-            if self.popup_attrs:
-                html_popup = self.get_popup(row)
-            else:
-                html_popup = None
-            map_geom = self.get_map_geom(row, self.color, html_popup)
+            map_geom = self.get_map_geom(row)
             map_geom.add_to(map)
 
 class Map():
