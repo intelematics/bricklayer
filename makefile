@@ -45,7 +45,9 @@ clean:
 	rm -rf env dist/* bricklayer.*
 
 ecr-login:
-	`aws ecr get-login --region ${ECR_REGION} --registry-ids ${ECR_ACCOUNT} --no-include-email`
+	aws ecr get-login-password --profile default --region ${ECR_REGION} | \
+		docker login --password-stdin --username AWS "${ECR_ACCOUNT}.dkr.ecr.${ECR_REGION}.amazonaws.com" || \
+	`aws ecr get-login --profile default --registry-ids ${ECR_ACCOUNT} --region ${ECR_REGION} --no-include-email`
 
 build: env-file
 	python setup.py sdist bdist_wheel
