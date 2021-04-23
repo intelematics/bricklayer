@@ -4,7 +4,13 @@ pipeline {
 
     stages {
 
-        stage('Publish') {
+        stage('Publish Dev') {
+            steps {
+                sh 'make publish-dev'
+            }
+        }
+
+        stage('Publish Release') {
             steps {
                 sh 'make publish-release'
             }
