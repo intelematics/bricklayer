@@ -1,16 +1,22 @@
 """
-    Wrappers for databricks_cli api and bring some sanity back with namespaces.
+    delta_tables crawlers
+    two functions supported
+    - restore delta tables from delta_log location
+    - update existing delta table from delta_log location
     Usage:
     ```
-    import DBSApi
-    # export notebook
-    db = DBSApi()
-    db.export_notebook(
-        source_path='/Repos/deploy/dac-dbs-volume-projection-validation/02_validation_notebooks/90_run_vp_6',
-        target_path= '/dbfs/mnt/external/tmp/90_run_vp_6'
+    import Crawler
+    # restore tables
+    c = Crawler()
+    c.restore_delta_tables(
+        working_dir='/mnt/dev_data_asset/delta',
+        tables= ['flow.feature_flow_intelemap_link_version_1']
     )
-    # To save the current notebook to the runs folder
-    db.export_current_notebook_run()
+    # relocate tables
+    c.relocate_delta_tables(
+        working_dir='/mnt/dev_data_asset/delta',
+        tables= ['flow.feature_flow_intelemap_link_version_1']
+    )
     ```
 """
 
