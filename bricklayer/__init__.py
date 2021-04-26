@@ -42,6 +42,7 @@ import sys
 from logging import NullHandler
 
 logging.getLogger(__name__).addHandler(NullHandler())
+logging.getLogger("py4j").setLevel(logging.ERROR)
 logging.basicConfig(
     level='INFO',
     stream=sys.stdout,

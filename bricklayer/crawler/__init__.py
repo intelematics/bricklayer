@@ -91,6 +91,10 @@ class Crawler():
         if not tables:
             tables = self._get_all_tables()
 
+        if not tables:
+            logging.warn(f'Cannot find any qualified table to relocate')
+            return
+
         for t in tables:
             table_name, version = t.split('_version_')
             table_new_location_path = f'/{working_dir}/{table_name}/version={version}'
