@@ -5,7 +5,7 @@
     - update existing delta table from delta_log location
     Usage:
     ```
-    import Crawler
+    from bricklayer.crawler import Crawler
     # restore tables
     c = Crawler()
     c.restore_delta_tables(
@@ -50,9 +50,13 @@ class Crawler():
                 table_location_path = f'/{working_dir}/{table_name}/version={version}'
                 self._create_delta_table(t, table_location_path)
         else:
-            for p in working_dir_abs_path.glob('*.*/version=*/_delta_log/'):
-                table_name = p.parts[4]
-                version = p.parts[5].split('version=')[1]
+            path_list = working_dir_abs_path.glob('*.*/version=*/_delta_log/')
+            if not path_list:
+                logging.warn(f'Cannot find any qualified path in {working_dir_abs_path}')
+                return
+            for p in path_list:
+                table_name = p.relative_to(working_dir_abs_path).parts[0]
+                version = p.relative_to(working_dir_abs_path).parts[1].split('version=')[1]
                 table_sql_name = f'{table_name}_version_{version}'
                 table_location_path = f'/{working_dir}/{table_name}/version={version}'
                 self._create_delta_table(table_sql_name, table_location_path)
