@@ -35,3 +35,16 @@ class NotebookContext():
         return self._context.notebookPath().x()
 
 notebook_context = NotebookContext()
+
+# Set default logging handler to avoid "No handler found" warnings.
+import logging
+import sys
+from logging import NullHandler
+
+logging.getLogger(__name__).addHandler(NullHandler())
+logging.basicConfig(
+    level='INFO',
+    stream=sys.stdout,
+    format='[{levelname}] [{asctime}] [{name}] [{module}.{funcName}] {message}',
+    style='{'
+)
