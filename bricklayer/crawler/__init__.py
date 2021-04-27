@@ -5,14 +5,14 @@
     - update existing delta table from delta_log location
     Usage:
     ```
-    import bricklayer.crawler
+    from bricklayer import crawler
     # restore tables
-    c.restore_delta_tables(
+    crawler.restore_delta_tables(
         dbfs_path='/mnt/dev_data_asset/delta',
         table_names= ['flow.feature_flow_intelemap_link_version_1']
     )
     # relocate tables
-    c.relocate_delta_tables(
+    crawler.relocate_delta_tables(
         dbfs_path='/mnt/dev_data_asset/delta',
         table_names= ['flow.feature_flow_intelemap_link_version_1']
     )
@@ -23,7 +23,7 @@ import typing
 import logging
 from pathlib import Path
 from pyspark.sql import SparkSession
-from ..catalog.dbricks_catalog import DbricksDatabase, DbricksCatalog
+from .. import catalog
 
 class Crawler():
 
@@ -140,7 +140,7 @@ class Crawler():
     def _get_all_tables(self):
         return [
             table.sql_name
-            for db in DbricksCatalog().get_databases()
+            for db in catalog.dbricks_catalog.DbricksCatalog().get_databases()
             for table in db.get_tables()
         ]
 
