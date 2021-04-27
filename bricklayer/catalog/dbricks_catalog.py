@@ -6,31 +6,32 @@ from pyspark.sql import SparkSession
 
 class DbricksTable:
     """A table found in the databricks catalog"""
-    def __init__(self, database_name, table_name , table_version, spark):
+    def __init__(self, database_name, table_name , table_version, info, spark):
         self.database_name = database_name
         self.table_name = table_name
         self.table_version = table_version
         self.spark = spark
-        try:
-            self.details = spark.sql(f"DESCRIBE DETAIL {self.sql_name}").first()
-        except AnalysisException as _e:
-            self.details = None
+        self.info = info
 
     @property
-    def table_format(self):
-        if self.details is None:
-            return None
-        return self.details.format
+    def table_created_time(self):
+        return self.info.get('Created Time')
+
+    @property
+    def table_type(self):
+        return self.info.get('Type')
+
+    @property
+    def table_provider(self):
+        return self.info.get('Provider')
 
     @property
     def table_location(self):
-        if self.details is None:
-            return None
-        return self.details.location
+        return self.info.get('Location')
 
     @property
     def is_view(self):
-        return self.details is None
+        return self.table_type == 'VIEW'
 
     @property
     def sql_name(self):
@@ -39,19 +40,34 @@ class DbricksTable:
 
 class DbricksDatabase:
     """Database found in the databricks catalog"""
+    
+    RELEVANT_TABLE_INFO = {'Created Time', 'Type', 'Provider', 'Location'}
+
     def __init__(self, name, spark):
         self.name = name
         self.spark = spark
 
     def get_tables(self) -> Iterator[DbricksTable]:
         """Generator to iterate over the databricks tables"""
-        for table_row in self.spark.sql(f'SHOW TABLES IN {self.name}').collect():
+        for table_row in self.spark.sql(f"SHOW TABLE EXTENDED IN {self.name} LIKE '*'").collect():
+            info = self._parse_extended_info(table_row.information)
             yield DbricksTable(
                 self.name,
                 table_row.tableName.split('_version_')[0],
                 table_row.tableName.split('_version_')[-1],
+                info=info,
                 spark=self.spark
             )
+
+    def _parse_extended_info(self, info):
+        result = {}
+        for line in info.split('\n'):
+            line_parts = line.split(':', maxsplit=1)
+            if len(line_parts) > 1:
+                if line_parts[0] in self.RELEVANT_TABLE_INFO:
+                    result[line_parts[0]] = line_parts[1].strip()
+        return result
+
 
     def __repr__(self):
         return f"{self.__class__.__name__}:{self.name}"
