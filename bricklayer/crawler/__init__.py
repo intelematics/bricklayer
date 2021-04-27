@@ -72,8 +72,8 @@ class Crawler():
                     success_paths.append(table_location_path)
                 else:
                     failure_paths.append(table_location_path)
-            logging.info(f"Restoring successful: {success_paths}")
-            logging.info(f"Restoring failed: {failure_paths}")
+        logging.info(f"Restoring successful: {success_paths}")
+        logging.info(f"Restoring failed: {failure_paths}")
 
     def _create_delta_table(self, table_sql_name: str, table_location_path: str) -> bool:
         sql = f"""
