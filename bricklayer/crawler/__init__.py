@@ -145,6 +145,7 @@ class Crawler():
             table.sql_name
             for db in catalog.dbricks_catalog.DbricksCatalog().get_databases()
             for table in db.get_tables()
+            if not table.is_view
         ]
 
 
