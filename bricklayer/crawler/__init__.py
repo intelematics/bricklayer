@@ -47,28 +47,31 @@ class Crawler():
         abs_path = Path(f'/dbfs/{dbfs_path}')
         logging.info(f'Absolute full path of the directory: {str(abs_path)}')
 
+        success_paths = []
+        failure_paths = []
         if table_names:
             for t in table_names:
                 table_name, version = t.split('_version_')
                 table_location_path = f'/{dbfs_path}/{table_name}/version={version}'
-                self._create_delta_table(t, table_location_path)
+                if self._create_delta_table(t, table_location_path):
+                    success_paths.append(table_location_path)
+                else:
+                    failure_paths.append(table_location_path)
         else:
             path_list = abs_path.glob('*.*/version=*/_delta_log/')
             if not path_list:
                 logging.warn(f'Cannot find any qualified path in {abs_path}')
                 return
 
-            success_paths = []
-            failure_paths = []
             for p in path_list:
                 table_name = p.relative_to(abs_path).parts[0]
                 version = p.relative_to(abs_path).parts[1].split('version=')[1]
                 table_sql_name = f'{table_name}_version_{version}'
                 table_location_path = f'/{dbfs_path}/{table_name}/version={version}'
                 if self._create_delta_table(table_sql_name, table_location_path):
-                    success_paths.append(p)
+                    success_paths.append(table_location_path)
                 else:
-                    failure_paths.append(p)
+                    failure_paths.append(table_location_path)
             logging.info(f"Restoring successful: {success_paths}")
             logging.info(f"Restoring failed: {failure_paths}")
 
