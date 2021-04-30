@@ -5,7 +5,7 @@
     - update existing delta table from delta_log location
     Usage:
     ```
-    from bricklayer import crawler
+    from bricklayer.catalog import crawler
     # restore tables
     crawler.restore_delta_tables(
         dbfs_path='/mnt/dev_data_asset/delta',
