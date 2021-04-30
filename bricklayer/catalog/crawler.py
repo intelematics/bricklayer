@@ -23,7 +23,7 @@ import typing
 import logging
 from pathlib import Path
 from pyspark.sql import SparkSession
-from .. import catalog
+from . import dbricks_catalog
 
 class Crawler():
 
@@ -143,7 +143,7 @@ class Crawler():
     def _get_all_tables(self):
         return [
             table.sql_name
-            for db in catalog.dbricks_catalog.DbricksCatalog().get_databases()
+            for db in dbricks_catalog.DbricksCatalog().get_databases()
             for table in db.get_tables()
             if not table.is_view
         ]
