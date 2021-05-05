@@ -1,4 +1,17 @@
 import json
+import logging
+import sys
+from logging import NullHandler
+
+# Set default logging handler to avoid "No handler found" warnings.
+logging.getLogger(__name__).addHandler(NullHandler())
+logging.getLogger("py4j").setLevel(logging.ERROR)
+logging.basicConfig(
+    level='INFO',
+    stream=sys.stdout,
+    format='[{levelname}] [{asctime}] [{name}] [{module}.{funcName}] {message}',
+    style='{'
+)
 
 def get_dbutils(spark):
     from pyspark.dbutils import DBUtils
