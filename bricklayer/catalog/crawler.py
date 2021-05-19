@@ -65,7 +65,9 @@ class Crawler():
             table_names = self._get_all_tables_from_dbfs_path(abs_path)
 
         if not prefixes:
+            logging.debug(f'table_names before filtering: {table_names}')
             table_names = self._filter_tables_by_prefixes(table_names, prefixes)
+            logging.debug(f'table_names after filtering: {table_names}')
 
         if not table_names:
             logging.warn('Cannot find any qualified table to restore')
@@ -130,7 +132,9 @@ class Crawler():
             table_names = self._get_all_tables_from_dbs_catalog()
 
         if not prefixes:
+            logging.debug(f'table_names before filtering: {table_names}')
             table_names = self._filter_tables_by_prefixes(table_names, prefixes)
+            logging.debug(f'table_names after filtering: {table_names}')
 
         if not table_names:
             logging.warn('Cannot find any qualified table to relocate')
