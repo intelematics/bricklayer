@@ -64,7 +64,7 @@ class Crawler():
         if not table_names:
             table_names = self._get_all_tables_from_dbfs_path(abs_path)
 
-        if not prefixes:
+        if prefixes:
             logging.debug(f'table_names before filtering: {table_names}')
             table_names = self._filter_tables_by_prefixes(table_names, prefixes)
             logging.debug(f'table_names after filtering: {table_names}')
@@ -131,7 +131,7 @@ class Crawler():
         if not table_names:
             table_names = self._get_all_tables_from_dbs_catalog()
 
-        if not prefixes:
+        if prefixes:
             logging.debug(f'table_names before filtering: {table_names}')
             table_names = self._filter_tables_by_prefixes(table_names, prefixes)
             logging.debug(f'table_names after filtering: {table_names}')
