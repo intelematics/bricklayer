@@ -116,6 +116,16 @@ class Layer():
                 coords,
                 **kwargs
             )
+        elif isinstance(sgeom, shapely.geometry.MultiLineString):
+            coords = [
+                (y, x)
+                for line in sgeom.geoms
+                for x,y in line.coords
+            ]
+            fgeom = folium.PolyLine(
+                coords,
+                **kwargs
+            )
         elif isinstance(sgeom, shapely.geometry.Point):
             kwargs['radius'] = self.radius
             coords = [(y, x) for x,y in sgeom.coords]
