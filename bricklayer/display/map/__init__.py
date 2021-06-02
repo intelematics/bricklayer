@@ -100,7 +100,7 @@ class Layer():
                 .to_html()
         ))
 
-    def get_map_geom(self, row: pd.Series):
+    def get_map_geoms(self, row: pd.Series):
         '''Get folium geometry from the shapely geom'''
         sgeom = row[self.geometry_col]
         kwargs = {'color': self.color}
@@ -112,32 +112,33 @@ class Layer():
             kwargs['weight'] = self.weight
         if isinstance(sgeom, shapely.geometry.LineString):
             coords = [(y, x) for x,y in sgeom.coords]
-            fgeom = folium.PolyLine(
+            fgeoms = [folium.PolyLine(
                 coords,
                 **kwargs
-            )
+            ),]
         elif isinstance(sgeom, shapely.geometry.MultiLineString):
-            coords = [
-                (y, x)
+            fgeoms = [
+                folium.PolyLine(
+                    [
+                        (y, x)
+                        for x,y in line.coords
+                    ],
+                    **kwargs
+                )
                 for line in sgeom.geoms
-                for x,y in line.coords
             ]
-            fgeom = folium.PolyLine(
-                coords,
-                **kwargs
-            )
         elif isinstance(sgeom, shapely.geometry.Point):
             kwargs['radius'] = self.radius
             coords = [(y, x) for x,y in sgeom.coords]
-            fgeom = folium.CircleMarker(
+            fgeoms = [folium.CircleMarker(
                 coords[0],
                 **kwargs
-            )
+            ),]
         else:
             raise NotImplementedError(f'Geometry Type not Supported {type(sgeom)}')
         if html_popup:
-            fgeom.add_child(html_popup)
-        return fgeom
+            fgeoms.add_child(html_popup)
+        return fgeoms
 
     def get_bounds(self):
         '''Get the bounds for all the geometries'''
@@ -156,8 +157,8 @@ class Layer():
     def render_to_map(self, folium_map):
         '''Render the layer into the map'''
         for _, row in self.dataframe.iterrows():
-            map_geom = self.get_map_geom(row)
-            map_geom.add_to(folium_map)
+            map_geoms = self.get_map_geoms(row)
+            map_geoms.add_to(folium_map)
 
 class Map():
     '''Map that can render layers'''
