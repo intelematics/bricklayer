@@ -137,7 +137,10 @@ class Layer():
         else:
             raise NotImplementedError(f'Geometry Type not Supported {type(sgeom)}')
         if html_popup:
-            fgeoms.add_child(html_popup)
+            fgeoms = [
+                fg.add_child(html_popup)
+                for fg in fgeoms
+            ]
         return fgeoms
 
     def get_bounds(self):
@@ -158,7 +161,8 @@ class Layer():
         '''Render the layer into the map'''
         for _, row in self.dataframe.iterrows():
             map_geoms = self.get_map_geoms(row)
-            map_geoms.add_to(folium_map)
+            for mg in map_geoms:
+                mg.add_to(folium_map)
 
 class Map():
     '''Map that can render layers'''
