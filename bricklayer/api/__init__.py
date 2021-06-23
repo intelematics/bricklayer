@@ -29,6 +29,7 @@ from databricks_cli.runs.api import RunsApi
 from .. import get_notebook_context
 
 class DBJobRun(object):
+    '''Wrapper for a Job Run'''
 
     def __init__(self, job, run_id, client):
         self.job = job
@@ -37,6 +38,7 @@ class DBJobRun(object):
     
     @property
     def data(self):
+        '''Return the data from the raw API call'''
         return RunsApi(self._client).get_run(self.run_id)
 
     @property
@@ -53,6 +55,7 @@ class DBJobRun(object):
 
     @property
     def run_page_url(self):
+        '''Return the URL of the run in the datbricks API'''
         return self.data['run_page_url']
 
     @property
@@ -60,14 +63,13 @@ class DBJobRun(object):
         return self.data['attempt_number']
 
     def get_run_output(self):
+        '''Return the output of the job as defined in the
+        job notebook with a call to `dbutils.notebook.exit` function'''
         data = RunsApi(self._client).get_run_output(self.run_id)
         return data.get('notebook_output')
-    
-
-    
-
 
 class DBJob(object):
+    '''Wrapper for a Job Run'''
     def __init__(self, job_id, client):
         self.job_id = job_id
         self._client = client
@@ -188,6 +190,16 @@ class DBSApi(object):
                             be provided at the same time with cluster_name)
         :param notifications_email: If provided notifications on success or failure on the job run
                             will be sent to this email address.
+        
+        Examples
+        --------
+        ```
+        job = DBSApi().create_job('./dummy_job')
+        job.run_now()
+        #
+        job = DBSApi().create_job('./dummy_job',cluster_name='Shared Writer')
+        run = job.run_now(notebook_params={'PARAM':'PARAM_VALUE'})
+        ```
         """
         if cluster_name:
             assert cluster_id is None
