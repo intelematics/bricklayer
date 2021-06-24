@@ -45,6 +45,10 @@ class NotebookContext():
         return f'https://{self.get_browser_host_name()}'
 
     def get_notebook_path(self):
-        return self._context.notebookPath().x()
+        return self._context.notebookPath().value()
+    
+    def get_notebook_cluster_id(self):
+        return self._context.clusterId().value()
 
-notebook_context = NotebookContext()
+def get_notebook_context():
+    return NotebookContext()
