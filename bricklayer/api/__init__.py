@@ -47,6 +47,7 @@ class DBJobRun(object):
 
     @property
     def life_cycle_state(self):
+        """Can be PENDING, RUNNING or TERMINATED"""
         return self.data['state'].get('life_cycle_state')
 
     @property
@@ -199,6 +200,27 @@ class DBSApi(object):
         #
         job = DBSApi().create_job('./dummy_job',cluster_name='Shared Writer')
         run = job.run_now(notebook_params={'PARAM':'PARAM_VALUE'})
+        #
+        # Example on how to run jobs with a max number of concurrent runs
+        # this can help when we have capacity limits in cpu in the infrastructure side
+        import time
+        NUM_JOBS_TO_RUN = 6
+        MAX_CONCURRENT_JOBS = 3
+        jobs_to_run = [
+            DBSApi().create_job('./dummy_job') for x in range(NUM_JOBS_TO_RUN)
+        ]
+        runs = []
+        while True:
+            running_runs = list(filter(lambda r:r.life_cycle_state !='TERMINATED', runs))
+            print(f'running runs:{len(running_runs)}')
+            if len(running_runs) < MAX_CONCURRENT_JOBS:
+                if not jobs_to_run:
+                    break
+                job_to_run = jobs_to_run.pop()
+                new_run = job_to_run.run_now()
+                runs.append(new_run)
+            else:
+                time.sleep(2)
         ```
         """
         if cluster_name:
