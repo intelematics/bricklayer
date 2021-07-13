@@ -3,21 +3,6 @@
     two functions supported
     - restore delta tables from delta_log location
     - update existing delta table from delta_log location
-    Usage:
-    ```
-    from bricklayer.catalog import crawler
-    # restore tables
-    crawler.restore_delta_tables(
-        dbfs_path='/mnt/data_asset/delta',
-        table_names= ['flow.feature_flow_intelemap_link_version_1'],
-        prefixes=['flow.feature_flow']
-    )
-    # relocate tables
-    crawler.relocate_delta_tables(
-        dbfs_path='/mnt/data_asset/delta',
-        table_names= ['flow.feature_flow_intelemap_link_version_1'],
-        prefixes=['flow.feature_flow']
-    )
     ```
 """
 
@@ -41,14 +26,9 @@ class Crawler():
         """recreate delta tables for all delta_log/ path which was found in the target directory
         Args:
             dbfs_path (str): relative path to dbfs/ in which save the delta table data
-                e.g. '/mnt/data_asset/delta'
             tables (typing.Iterable[str], optional): tables(table_sql_name) to be restored
-                e.g. flow.feature_flow_intelemap_link_version_1
-                Defaults to None.
             prefixes (typing.Iterable[str], optional): prefix of tables to be relocated.
                 If `talbe_names` and `prefixes` are using at the same time, only `table_names` start with `prefixes` will in
-                e.g. 'flow.feature_flow'
-                Defaults to None.
         """
         if isinstance(table_names, str):
             table_names = [table_names]
@@ -110,14 +90,9 @@ class Crawler():
         """update the location url for all tables which could be retrieved by Databricks sql
         Args:
             dbfs_path (str): working directory in which save the delta table data
-                e.g. '/mnt/dev_data_asset/delta'
             table_names (typing.Iterable[str], optional): tables to be relocated
-                e.g. 'flow.feature_flow_intelemap_link_version_1'
-                Defaults to None.
             prefixes (typing.Iterable[str], optional): prefix of tables to be relocated.
                 If `talbe_names` and `prefixes` are using at the same time, only `table_names` start with `prefixes` will in
-                e.g. 'flow.feature_flow'
-                Defaults to None.
         """
         if isinstance(table_names, str):
             table_names = [table_names]

@@ -74,7 +74,6 @@ class DbricksDatabase:
 
 class DbricksCatalog:
     """Databricks catalog"""
-    IGNORE_DATABASES = ('tmp', 'default')
 
     def __init__(self, spark=None):
         if spark is None:
@@ -85,6 +84,4 @@ class DbricksCatalog:
     def get_databases(self) -> Iterator[DbricksDatabase]:
         """Iterator over all the databases in the databricks catalog"""
         for db_row in self.spark.sql('SHOW DATABASES').collect():
-            if db_row.databaseName in self.IGNORE_DATABASES:
-                continue
             yield DbricksDatabase(db_row.databaseName, spark=self.spark)
