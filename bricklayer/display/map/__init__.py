@@ -52,7 +52,7 @@ class Layer():
                     candidates.append(column)
                 elif 'geography' in column:
                     candidates.append(column)
-                elif column.endswith('wkt'):
+                elif 'wkt' in column:
                     candidates.append(column)
             if len(candidates) > 1:
                 raise ValueError("Specify the geometry_col argument for the data")
