@@ -12,7 +12,7 @@ develop-eggs/
 dist/
 
 # Exclude whl
-!dist/bricklayer*
+!/*.whl
 
 downloads/
 eggs/
