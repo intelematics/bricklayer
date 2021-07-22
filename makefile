@@ -11,6 +11,6 @@ help:
 clean:
 	rm -rf build/*
 
-build_local:
+build_wheel:
 	python setup.py sdist bdist_wheel
 
