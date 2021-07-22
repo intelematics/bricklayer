@@ -10,10 +10,6 @@ __pycache__/
 .Python
 develop-eggs/
 dist/
-
-# Exclude whl
-!/*.whl
-
 downloads/
 eggs/
 .eggs/
@@ -136,4 +132,3 @@ dmypy.json
 build/env
 
 .DS_Store
-

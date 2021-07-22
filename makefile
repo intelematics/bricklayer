@@ -12,5 +12,5 @@ clean:
 	rm -rf build/*; rm -rf dist/*
 
 build_wheel:
-	python setup.py sdist bdist_wheel
+	python setup.py sdist bdist_wheel; mkdir -p package; cp dist/*.whl package
 
