@@ -23,6 +23,7 @@ import requests
 from databricks_cli.workspace.api import WorkspaceApi
 from databricks_cli.jobs.api import JobsApi
 from databricks_cli.sdk import ApiClient
+from databricks_cli.sdk import JobsService
 from databricks_cli.clusters.api import ClusterApi
 from databricks_cli.runs.api import RunsApi
 
@@ -35,7 +36,7 @@ class DBJobRun(object):
         self.job = job
         self.run_id = run_id
         self._client = client
-    
+
     @property
     def data(self):
         '''Return the data from the raw API call'''
@@ -75,7 +76,7 @@ class DBJob(object):
         self.job_id = job_id
         self._client = client
         self.runs = []
-    
+
     def run_now(self, jar_params=None, notebook_params=None, python_params=None,
                     spark_submit_params=None):
         """Run this job.
@@ -96,6 +97,15 @@ class DBJob(object):
         self.runs.append(run)
         return run
 
+    def stop(self):
+        "Stop this job."
+        for run in self.runs:
+            JobsService(self._client).client.perform_query(
+                'POST', '/jobs/runs/cancel', data={
+                    "run_id": run.run_id
+                }
+            )
+
 
 class DBSApi(object):
 
@@ -107,7 +117,7 @@ class DBSApi(object):
     ):
         if token is None:
             token = get_notebook_context().get_api_token()
-        
+
         if host is None:
             host = get_notebook_context().get_browser_host_name_url()
 
@@ -180,7 +190,7 @@ class DBSApi(object):
                 self.backup_notebook(current_path, target_path.as_posix(), tmp_dir)
             else:
                 raise
-    
+
     def create_job(self, notebook_path, job_name=None, cluster_name=None,
             cluster_id=None, notifications_email=None):
         """Create a databricks job.
@@ -191,7 +201,7 @@ class DBSApi(object):
                             be provided at the same time with cluster_name)
         :param notifications_email: If provided notifications on success or failure on the job run
                             will be sent to this email address.
-        
+
         Examples
         --------
         ```
@@ -245,7 +255,7 @@ class DBSApi(object):
                 .joinpath(notebook_path)
                 .as_posix()
             )
-        
+
         _json = (
                     {
                     "name": _job_name,
@@ -269,4 +279,33 @@ class DBSApi(object):
             self._client
         )
 
+    def list_jobs(self, job_name='', job_id=''):
+        """List all jobs with job name or job id
+        """
+        jobs = []
+        _jobs = JobsApi(self._client).list_jobs()['jobs']
 
+        if job_name:
+            result = list(
+                filter(
+                    lambda job:
+                        job_name in job['settings']['name'],
+                        _jobs
+                ))
+
+        if job_id:
+            result = list(
+                filter(
+                    lambda job:
+                        job_id in job['job_id'],
+                        _jobs
+                ))
+
+        for jobdata in result:
+            job = DBJob(
+                jobdata['job_id'],
+                self._client
+            )
+            jobs.append(job)
+
+        return jobs
