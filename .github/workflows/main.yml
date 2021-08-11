@@ -23,11 +23,45 @@ jobs:
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v2
+      - name: Checkout Code
+        uses: actions/checkout@v2
         with:
           ref: ${{ github.event.pull_request.head.ref }}
 
-      # Runs a single command using the runners shell
-      - name: build wheel
-        run: make clean; make build_wheel; sh commit.sh
+      # Build the wheel
+      - name: Build Wheel
+        run: |
+          make clean
+          make build_wheel
+
+      # Create release artifact
+      - name: Create Release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+          draft: false
+          prerelease: false
+
+      # Upload release asset to github endpoint
+      - name: Upload Release Asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`.
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./bricklayer.zip
+          asset_name: bricklayer.zip
+          asset_content_type: application/zip
+
+      - name: Publish Release Asset
+        uses: eregon/publish-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          release_id: ${{ steps.create_release.outputs.id }}
+
 
