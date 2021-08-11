@@ -35,6 +35,8 @@ jobs:
         run: |
           make clean
           make build_wheel
+        env:
+          TAG: ${{ TAG }}
 
       # Create release artifact
       - name: Create Release
