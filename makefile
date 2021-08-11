@@ -5,7 +5,6 @@ GIT_COMMIT=`git rev-parse --short HEAD`
 
 VERSION_FILE:=bricklayer/__version__.py
 VERSION:=$(shell cut -d \' -f 2 ${VERSION_FILE})
-TAG:=bricklayer:${VERSION}
 
 help:
 	@echo "Build targets:"

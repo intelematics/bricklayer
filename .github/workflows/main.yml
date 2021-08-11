@@ -35,7 +35,7 @@ jobs:
         run: |
           make clean
           make build_wheel
-          echo "TAG=${TAG}" >> $GITHUB_ENV
+          echo "TAG=bricklayer:${VERSION}" >> $GITHUB_ENV
 
       # Create release artifact
       - name: Create Release
