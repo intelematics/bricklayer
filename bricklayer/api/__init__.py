@@ -161,33 +161,35 @@ class DBSApi(object):
             )
         )
 
-    def backup_notebook(self, source_path, target_path, tmp_dir):
+    def backup_notebook(self, source_path, target_path):
         "Backup a notebook to another place in the workspace"
-        tmp_name = f'backup_{random.randint(0,1000)}'
+        tmp_dir = '/dbfs/tmp/'
+        tmp_name = 'backup'
         intermediate_location = pathlib.Path(tmp_dir).joinpath(tmp_name)
+        print(intermediate_location.as_posix())
         self.export_notebook(source_path, intermediate_location.as_posix())
         try:
             self.import_notebook(intermediate_location, target_path)
         finally:
             intermediate_location.unlink()
 
-    def export_current_notebook_run(self, runs_dir, tmp_dir):
+    def export_current_notebook_run(self, target_path):
         """Save the current notebook to a given location preserving
         the path and timestamp"""
         current_path = get_notebook_context().get_notebook_path()
         timestamp = datetime.datetime.now().strftime('%Y%m%d%H%M%S')
         target_path = (
-                pathlib.Path(runs_dir)
+                pathlib.Path(target_path)
                 .joinpath(current_path[1:])
                 .joinpath(timestamp)
         )
         try:
-            self.backup_notebook(current_path, target_path.as_posix(), tmp_dir)
+            self.backup_notebook(current_path, target_path.as_posix())
         except requests.exceptions.HTTPError as _e:
             error_code = _e.response.json()['error_code']
             if error_code == 'RESOURCE_DOES_NOT_EXIST':
                 self.mkdir(target_path.parent.as_posix())
-                self.backup_notebook(current_path, target_path.as_posix(), tmp_dir)
+                self.backup_notebook(current_path, target_path.as_posix())
             else:
                 raise
 
