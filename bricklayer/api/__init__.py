@@ -161,21 +161,27 @@ class DBSApi(object):
             )
         )
 
-    def backup_notebook(self, source_path, target_path):
+    def backup_notebook(self, source_path, target_path, fmt:"DBC"):
         "Backup a notebook to another place in the workspace"
         tmp_dir = '/dbfs/tmp/'
         tmp_name = 'backup'
         intermediate_location = pathlib.Path(tmp_dir).joinpath(tmp_name)
         print(intermediate_location.as_posix())
-        self.export_notebook(source_path, intermediate_location.as_posix())
+        self.export_notebook(source_path, intermediate_location.as_posix(), fmt)
         try:
-            self.import_notebook(intermediate_location, target_path)
+            self.import_notebook(intermediate_location, target_path, fmt)
         finally:
             intermediate_location.unlink()
 
-    def export_current_notebook_run(self, target_path):
-        """Save the current notebook to a given location preserving
-        the path and timestamp"""
+    def export_current_notebook_run(self, target_path, fmt:"DBC"):
+        """Save the current notebook to a given location in the required format (default DBC)
+        and preserving the path and timestamp.
+        Formats allowed:
+            SOURCE : The notebook will be imported/exported as source code.
+            HTML   : The notebook will be imported/exported as an HTML file.
+            JUPYTER: The notebook will be imported/exported as a Jupyter/IPython Notebook file.
+            DBC	   : The notebook will be imported/exported as Databricks archive format.
+        """
         current_path = get_notebook_context().get_notebook_path()
         timestamp = datetime.datetime.now().strftime('%Y%m%d%H%M%S')
         target_path = (
@@ -184,12 +190,12 @@ class DBSApi(object):
                 .joinpath(timestamp)
         )
         try:
-            self.backup_notebook(current_path, target_path.as_posix())
+            self.backup_notebook(current_path, target_path.as_posix(), fmt)
         except requests.exceptions.HTTPError as _e:
             error_code = _e.response.json()['error_code']
             if error_code == 'RESOURCE_DOES_NOT_EXIST':
                 self.mkdir(target_path.parent.as_posix())
-                self.backup_notebook(current_path, target_path.as_posix())
+                self.backup_notebook(current_path, target_path.as_posix(), fmt)
             else:
                 raise
 
