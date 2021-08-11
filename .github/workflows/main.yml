@@ -38,9 +38,9 @@ jobs:
           ARTIFACT_PATHNAME=$(ls dist/*.whl | head -n 1)
           ARTIFACT_NAME=$(basename $ARTIFACT_PATHNAME)
           VERSION=$(cut -d \' -f 2 bricklayer/__version__.py)
-          echo ::set-env name=TAG::${VERSION}
-          echo ::set-env name=ARTIFACT_NAME::${ARTIFACT_NAME}
-          echo ::set-env name=ARTIFACT_PATHNAME::${ARTIFACT_PATHNAME}
+          echo "TAG=${VERSION}" >> $GITHUB_ENV
+          echo "ARTIFACT_NAME=${ARTIFACT_NAME}" >> $GITHUB_ENV
+          echo "ARTIFACT_PATHNAME=${ARTIFACT_PATHNAME}" >> $GITHUB_ENV
 
       # Create release artifact
       - name: Create Release
