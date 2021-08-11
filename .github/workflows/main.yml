@@ -35,9 +35,7 @@ jobs:
         run: |
           make clean
           make build_wheel
-          echo "VERSION_FILE=bricklayer/__version__.py" >> $GITHUB_ENV
-          echo "VERSION=$(shell cut -d \' -f 2 ${VERSION_FILE})" >> $GITHUB_ENV
-          echo "TAG=bricklayer:${VERSION}" >> $GITHUB_ENV
+          echo "TAG=bricklayer:$(cut -d \' -f 2 bricklayer/__version__.py)" >> $GITHUB_ENV
 
       # Create release artifact
       - name: Create Release
