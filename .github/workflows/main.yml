@@ -46,16 +46,17 @@ jobs:
           prerelease: false
 
       # Upload release asset to github endpoint
-      - name: Upload Release Asset
+      - name: Upload Release Artifact
+        needs: [create_release]
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`.
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./bricklayer.zip
-          asset_name: bricklayer.zip
-          asset_content_type: application/zip
+          asset_path: dist/bricklayer*.gz
+          asset_name: bricklayer*.gz
+          asset_content_type: application/gzip
 
       - name: Publish Release Asset
         uses: eregon/publish-release@v1
