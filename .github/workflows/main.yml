@@ -35,7 +35,12 @@ jobs:
         run: |
           make clean
           make build_wheel
-          echo "TAG=$(cut -d \' -f 2 bricklayer/__version__.py)" >> $GITHUB_ENV
+          ARTIFACT_PATHNAME=$(ls dist/*.whl | head -n 1)
+          ARTIFACT_NAME=$(basename $ARTIFACT_PATHNAME)
+          VERSION=$(cut -d \' -f 2 bricklayer/__version__.py)
+          echo ::set-env name=TAG::${VERSION}
+          echo ::set-env name=ARTIFACT_NAME::${ARTIFACT_NAME}
+          echo ::set-env name=ARTIFACT_PATHNAME::${ARTIFACT_PATHNAME}
 
       # Create release artifact
       - name: Create Release
@@ -46,7 +51,7 @@ jobs:
         with:
           tag_name: ${{ env.TAG }}
           release_name: Release ${{ env.TAG }}
-          draft: false
+          draft: true
           prerelease: false
 
       # Upload release asset to github endpoint
@@ -57,8 +62,8 @@ jobs:
         with:
           # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`.
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: dist/bricklayer*.whl
-          asset_name: bricklayer*.whl
+          asset_path: ${{ env.ARTIFACT_PATHNAME }}
+          asset_name: ${{ env.ARTIFACT_NAME }}
           asset_content_type: application/x-wheel+zip
 
       - name: Publish Release Asset
