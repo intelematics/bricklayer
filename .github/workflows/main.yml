@@ -4,10 +4,8 @@ name: CI
 
 # Controls when the action will run.
 on:
-  # Triggers the workflow on push or pull request events but only for the master branch
+  # Triggers the workflow on pull request merged into master branch events
   push:
-    branches: [ master ]
-  pull_request:
     branches: [ master ]
 
   # Allows you to run this workflow manually from the Actions tab
@@ -40,8 +38,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ github.ref }}
-          release_name: Release ${{ github.ref }}
+          tag_name: ${TAG}
+          release_name: Release ${TAG}
           draft: false
           prerelease: false
 
@@ -53,9 +51,9 @@ jobs:
         with:
           # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`.
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: dist/bricklayer*.gz
-          asset_name: bricklayer*.gz
-          asset_content_type: application/gzip
+          asset_path: dist/bricklayer*.whl
+          asset_name: bricklayer*.whl
+          asset_content_type: application/x-wheel+zip
 
       - name: Publish Release Asset
         uses: eregon/publish-release@v1
