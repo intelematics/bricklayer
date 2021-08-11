@@ -9,8 +9,7 @@ help:
 	@echo "- build_wheel:          		builds wheel package locally"
 
 clean:
-	rm -rf build/*
+	rm -rf build/*; rm -rf dist/*
 
-build_local:
+build_wheel:
 	python setup.py sdist bdist_wheel
-
