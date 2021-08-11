@@ -35,8 +35,7 @@ jobs:
         run: |
           make clean
           make build_wheel
-        env:
-          TAG: ${{ TAG }}
+          echo "TAG=${TAG}" >> $GITHUB_ENV
 
       # Create release artifact
       - name: Create Release
@@ -45,8 +44,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ steps.build_wheel.env.TAG }}
-          release_name: Release ${{ steps.build_wheel.env.TAG }}
+          tag_name: ${{ env.TAG }}
+          release_name: Release ${{ env.TAG }}
           draft: false
           prerelease: false
 
