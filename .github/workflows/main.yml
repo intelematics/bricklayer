@@ -31,6 +31,7 @@ jobs:
 
       # Build the wheel
       - name: Build Wheel
+        id: build_wheel
         run: |
           make clean
           make build_wheel
@@ -42,8 +43,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ env.TAG }}
-          release_name: Release ${{ env.TAG }}
+          tag_name: ${{ steps.build_wheel.env.TAG }}
+          release_name: Release ${{ steps.build_wheel.env.TAG }}
           draft: false
           prerelease: false
 
