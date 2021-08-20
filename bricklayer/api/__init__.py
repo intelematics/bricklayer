@@ -166,7 +166,6 @@ class DBSApi(object):
         tmp_dir = '/dbfs/tmp/'
         tmp_name = 'backup'
         intermediate_location = pathlib.Path(tmp_dir).joinpath(tmp_name)
-        print(intermediate_location.as_posix())
         self.export_notebook(source_path, intermediate_location.as_posix(), fmt)
         try:
             self.import_notebook(intermediate_location, target_path, fmt)
