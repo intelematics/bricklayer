@@ -161,7 +161,7 @@ class DBSApi(object):
             )
         )
 
-    def backup_notebook(self, source_path, target_path, fmt:"DBC"):
+    def backup_notebook(self, source_path, target_path, fmt="DBC"):
         "Backup a notebook to another place in the workspace"
         tmp_dir = '/dbfs/tmp/'
         tmp_name = 'backup'
