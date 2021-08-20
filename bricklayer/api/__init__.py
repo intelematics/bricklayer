@@ -172,7 +172,7 @@ class DBSApi(object):
         finally:
             intermediate_location.unlink()
 
-    def export_current_notebook_run(self, target_path, fmt:"DBC"):
+    def export_current_notebook_run(self, target_path, fmt="DBC"):
         """Save the current notebook to a given location in the required format (default DBC)
         and preserving the path and timestamp.
         Formats allowed:
