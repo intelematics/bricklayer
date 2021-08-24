@@ -5,6 +5,7 @@ A Databricks utility for data engineers whose job is to farm jobs, build map lay
 ## Install
 
 ```
+
 pip install https://github.com/intelematics/bricklayer/releases/download/0.0.7/bricklayer-0.0.7-py3-none-any.whl
 ```
 
@@ -26,7 +27,7 @@ Map([
 
 ```
 
-To spawn concurrent jobs:
+To spawn concurrent jobs in a Databricks notebook:
 ```
 %py
 
@@ -36,6 +37,21 @@ for x in range(3):
     job = DBSApi().create_job('./dummy_job')
 
 ```
+More examples can be found under [examples](examples).
+
+## Roadmap
+
+See [the roadmap](ROADMAP.md) if you are interested in plans for the
+future.
+
+## Changelog
+
+Follow bricklayer's updates on [the changelog](CHANGELOG.md).
+
+## Reporting Issues
+
+Please report any bugs and enhancement ideas using the [bricklayer issue
+tracker](https://github.com/intelematics/bricklayer/issues).
 
 ## Contributing
 
@@ -43,4 +59,5 @@ PRs accepted.
 
 ## License
 
-MIT ©
+Bricklayer is licensed under the terms of the MIT License (see the file
+LICENSE).
