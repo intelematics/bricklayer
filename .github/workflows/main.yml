@@ -51,6 +51,18 @@ jobs:
           draft: true
           prerelease: false
 
+      # Create latest release artifact
+      - name: Create Latest Release
+        id: create_release_latest
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: latest
+          release_name: Latest Release with version ${{ env.TAG }}
+          draft: true
+          prerelease: false
+
       # Upload release asset to github endpoint
       - name: Upload Release Artifact
         uses: actions/upload-release-asset@v1
@@ -63,6 +75,19 @@ jobs:
           asset_name: ${{ env.ARTIFACT_NAME }}
           asset_content_type: application/x-wheel+zip
 
+      # Upload latest release asset to github endpoint
+      - name: Upload Latest Release Artifact
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`.
+          upload_url: ${{ steps.create_release_latest.outputs.upload_url }}
+          asset_path: ${{ env.ARTIFACT_PATHNAME }}
+          asset_name: ${{ env.ARTIFACT_NAME }}
+          asset_content_type: application/x-wheel+zip
+
+      # Publish release asset to github endpoint
       - name: Publish Release Asset
         uses: eregon/publish-release@v1
         env:
@@ -70,4 +95,10 @@ jobs:
         with:
           release_id: ${{ steps.create_release.outputs.id }}
 
-
+      # Publish latest release asset to github endpoint
+      - name: Publish Latest Release Asset
+        uses: eregon/publish-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          release_id: ${{ steps.create_release_latest.outputs.id }}
