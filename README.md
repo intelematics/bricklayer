@@ -12,7 +12,7 @@ pip install https://github.com/intelematics/bricklayer/releases/download/0.0.7/b
 ## Usage
 
 To render map display in a Databricks notebook with features:
-```
+```python
 %py
 
 from bricklayer.api import DBSApi
@@ -28,7 +28,7 @@ Map([
 ```
 
 To spawn concurrent jobs in a Databricks notebook:
-```
+```python
 %py
 
 from bricklayer.api import DBSApi
@@ -59,5 +59,5 @@ PRs accepted.
 
 ## License
 
-Bricklayer is licensed under the terms of the MIT License (see the file
-LICENSE).
+Bricklayer is licensed under the Apache License, Version 2.0. See
+[LICENSE](LICENSE) for the full license text.
