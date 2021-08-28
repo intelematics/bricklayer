@@ -10,8 +10,13 @@ on, and everything is subject to change.
 
 - Continue making error messages more useful and informative.
 
-- Use [OpenAPI/Swagger Specification](https://swagger.io/specification/) and [Avro Specification](https://avro.apache.org/docs/current/gettingstartedpython.html) to define schema and generate notebook with CREATE TABLE scripts and PySpark custom StructType templates.
+- Use [OpenAPI/Swagger Specification](https://swagger.io/specification/) and 
+[Avro Specification](https://avro.apache.org/docs/current/gettingstartedpython.html) 
+to define schema and generate notebook with CREATE TABLE scripts and PySpark 
+custom StructType templates.
 
-- Support catalog validation with above schemas.
+- Support generation of Swagger/Avro definition out of existing table schemas.
+
+- Support comparison of databricks table schema with Swagger/Avro definitions.
 
 - Support testing for notebooks.
