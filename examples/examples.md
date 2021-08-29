@@ -1,4 +1,4 @@
-# Jobs
+# Concurrent Jobs
 
 Create a job using the absolute path of the notebook. The result of a job execution is a reference to the job run.
 
@@ -84,6 +84,7 @@ while True:
         time.sleep(2)
 print('done')
 ```
+Jobs will run but there will be no more than 3 jobs running concurrently.
 ```
 running runs:0
 running runs:1
@@ -95,8 +96,8 @@ running runs:2
 done
 ```
 
-# Maps
-Maps can be rendered easily in notebooks by using the classes in `bricklayer.display.map` which use folium. A `Map` can get contain one or more `Layer` objects. Each layer can render a set of geo-data. A layer rendering can be customized in the constructor call with the arguments:
+# Easy map rendering.
+Maps can be rendered easily in notebooks by using the classes in `bricklayer.display.map` which uses [folium](https://github.com/python-visualization/folium). A `Map` can get contain one or more `Layer` objects. Each layer can render a set of geo-data. A layer rendering can be customized in the constructor call with the arguments:
 
 - `data` You can pass as data a pandas dataframe, or a geodataframe or a spark dataframe or a databricks SQL query.
 - `popup_attrs` A list of the attributes used to populate a pop up, if not passed there will be no popup. If True is passed instead it will put all the attrs.
@@ -128,4 +129,5 @@ Map([
   )
 ]).render()
 ```
+Then click over the features can render a pop-up with the attributes values for the given feature.
 ![map_demo1](map_demo2.png)
