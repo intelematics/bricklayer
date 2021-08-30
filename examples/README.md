@@ -131,3 +131,48 @@ Map([
 ```
 Then click over the features can render a pop-up with the attributes values for the given feature.
 ![map_demo1](map_demo2.png)
+
+
+# Schema to spark table generator
+Schema can be defined in Apache Avro record format or OpenAPI. By using `bricklayer.catalog.schema.avro` a spark table creation script is generator and ready for execution.
+
+```python
+from bricklayer.catalog.schema.avro import AvroRecord
+ar = AvroRecord(av_record = {
+    'doc': 'A weather reading.',
+    'name': 'weather',
+    'namespace': 'test',
+    'type': 'record',
+    'fields': [
+        {'name': 'station', 'type': ['null','string']},
+        {'name': 'time', 'type': 'long'},
+        {'name': 'temp', 'type': 'int'},
+    ],
+})
+print(ar.get_create_table_sql(partition_cols=['station'],location='/dbfs/delta/weather'))
+```
+```
+CREATE TABLE test.weather (
+	station STRING ,
+	time LONG NOT NULL,
+	temp INT NOT NULL
+)
+USING DELTA
+PARTITIONED BY (
+station
+)
+LOCATION "/dbfs/delta/weather"
+COMMENT 'A weather reading.'
+```
+
+```python
+print(ar.get_spark_struct())
+```
+```
+StructType(
+   List(
+      StructField(station,StringType,true),
+      StructField(time,LongType,false),
+      StructField(temp,IntegerType,false))
+)
+```
