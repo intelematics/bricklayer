@@ -176,3 +176,25 @@ StructType(
       StructField(temp,IntegerType,false))
 )
 ```
+
+# Copy/Backup notebook runs in the workspace
+
+Export the current notebook.
+
+```python
+from bricklayer.api import DBSApi, get_notebook_context
+dbapi = DBSApi()
+dbapi.export_notebook(
+    get_notebook_context().get_notebook_path(),
+    '/dbfs/tmp/mynotebook_backup'
+)
+```
+
+Then import it back to the workspace to do a backup
+```python
+dbapi.mkdir('/Shared/backups/2021_09_02')
+dbapi.import_notebook(
+    '/dbfs/tmp/mynotebook_backup',
+    '/Shared/backups/2021_09_02/mynotebook',
+)
+```
