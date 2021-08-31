@@ -3,8 +3,8 @@
 [Schema to spark table generator](#schema) |
 [Copy/Backup notebook runs in the workspace](#workspace)
 
-<a name="concurrent_jobs"/>
-# Concurrent Jobs
+
+# Concurrent Jobs <a name="concurrent_jobs"/>
 
 Create a job using the absolute path of the notebook. The result of a job execution is a reference to the job run.
 
@@ -101,8 +101,8 @@ running runs:3
 running runs:2
 done
 ```
-<a name="map"/>
-# Easy map rendering.
+
+# Easy map rendering. <a name="map"/>
 Maps can be rendered easily in notebooks by using the classes in `bricklayer.display.map` which uses [folium](https://github.com/python-visualization/folium). A `Map` can get contain one or more `Layer` objects. Each layer can render a set of geo-data. A layer rendering can be customized in the constructor call with the arguments:
 
 - `data` You can pass as data a pandas dataframe, or a geodataframe or a spark dataframe or a databricks SQL query.
@@ -138,9 +138,7 @@ Map([
 Then click over the features can render a pop-up with the attributes values for the given feature.
 ![map_demo1](map_demo2.png)
 
-
-<a name="schema"/>
-# Schema to spark table generator
+# Schema to spark table generator<a name="schema"/>
 Schema can be defined in Apache Avro record format or OpenAPI. By using `bricklayer.catalog.schema.avro` a spark table creation script is generator and ready for execution.
 
 ```python
@@ -284,8 +282,8 @@ There are no dependencies for this table
 
   Contains weather
 ```
-<a name="workspace"/>
-# Copy/Backup notebook runs in the workspace
+
+# Copy/Backup notebook runs in the workspace <a name="workspace"/>
 
 Export the current notebook.
 
