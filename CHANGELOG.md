@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## 0.0.9
 
 #### New Features
 
@@ -13,7 +13,17 @@
 * Added a ROADMAP
 * Added examples with bricklayer usage
 
-Full set of changes: [`Unreleased`](https://github.com/intelematics/bricklayer/compare/0.0.7...HEAD)
+Full set of changes: [`Unreleased`](https://github.com/intelematics/bricklayer/compare/0.0.8...HEAD)
+
+
+## 0.0.8 (2021-08-30)
+
+#### New Features
+
+* Add schema code generation with Apache Avro specification.
+
+
+Full set of changes: [`Unreleased`](https://github.com/intelematics/bricklayer/compare/0.0.7...0.0.8)
 
 ## 0.0.7 (2021-08-20)
 

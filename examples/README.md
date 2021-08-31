@@ -1,3 +1,9 @@
+[Concurrent Jobs](#concurrent_jobs) |
+[Easy map rendering](#map) |
+[Schema to spark table generator](#schema) |
+[Copy/Backup notebook runs in the workspace](#workspace)
+
+<a name="concurrent_jobs"/>
 # Concurrent Jobs
 
 Create a job using the absolute path of the notebook. The result of a job execution is a reference to the job run.
@@ -95,7 +101,7 @@ running runs:3
 running runs:2
 done
 ```
-
+<a name="map"/>
 # Easy map rendering.
 Maps can be rendered easily in notebooks by using the classes in `bricklayer.display.map` which uses [folium](https://github.com/python-visualization/folium). A `Map` can get contain one or more `Layer` objects. Each layer can render a set of geo-data. A layer rendering can be customized in the constructor call with the arguments:
 
@@ -133,6 +139,7 @@ Then click over the features can render a pop-up with the attributes values for 
 ![map_demo1](map_demo2.png)
 
 
+<a name="schema"/>
 # Schema to spark table generator
 Schema can be defined in Apache Avro record format or OpenAPI. By using `bricklayer.catalog.schema.avro` a spark table creation script is generator and ready for execution.
 
@@ -177,6 +184,107 @@ StructType(
 )
 ```
 
+Table ddl, StructType and markup outputs are available for swagger schema:
+```python
+from bricklayer.catalog.schema.swagger import SwaggerRecord
+swagger = SwaggerRecord(swaggerString="""
+openapi: 3.0.0
+info:
+  title: test
+  description: A weather reading.
+  version: 1.0.0
+components:
+  schemas:
+    weather:
+      description: >-
+        A weather reading.
+      x-data-asset-schema: test
+      x-data-asset-table: weather
+      x-data-asset-version: 1
+      x-data-asset-partition-keys: [station]
+      x-data-asset-unique-keys:
+      - station
+      - time
+      x-data-asset-static-reference:
+        s3-location: s3://data-asset/test.time/version=1/
+      x-data-asset-source-urls:
+      - https://github.com/intelematics/bricklayer/generate_weather.py
+      x-data-asset-changelog:
+      - version: 1
+        description: >-
+          Contains weather
+      x-data-asset-dependencies: []
+      x-data-asset-relationships: []
+      properties:
+        station:
+          type: string
+          description: >-
+            Weather station
+        time:
+          type: date
+          description: >-
+            timestamp
+          example: 123456789
+        temp:
+          type: integer
+""")
+for rendered_output in swagger.get_create_table_sql():
+    print(rendered_output)
+```
+```
+CREATE TABLE test.weather_version_1 (
+  station STRING,
+  time DATE,
+  temp INT
+)
+USING DELTA
+PARTITIONED BY (
+  station
+)
+LOCATION '/mnt/data_asset/test.weather/version=1'
+TBLPROPERTIES ('unique_keys' = '["station", "time"]')
+```
+```python
+for rendered_output in swagger_parser_databricks.get_spark_struct():
+    print(rendered_output)
+```
+```
+StructType(List(StructField(station,StringType,false),StructField(time,DateType,false),StructField(temp,IntegerType,true)))
+```
+```python
+for rendered_output in swagger_parser_databricks.get_markup():
+    print(rendered_output)
+```
+```
+# test.weather
+A weather reading.
+
+## Partition Keys
+- station
+
+## Unique Keys
+- station
+- time
+
+
+| **Property Name** | **Property Type** | **Property Comment** | **Property Example** |
+| ---------- | --------- | ----------- | --------- |
+| station | varchar(64) | Weather station |  |
+| time | DATE | timestamp | 123456789 |
+| temp | INT |  |  |
+
+## Dependencies
+There are no dependencies for this table
+## Sources
+- https://github.com/intelematics/bricklayer/generate_weather.py
+
+## Changelog
+
+- **Version 1**
+
+  Contains weather
+```
+<a name="workspace"/>
 # Copy/Backup notebook runs in the workspace
 
 Export the current notebook.
