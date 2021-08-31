@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.0.9
+## 0.0.9 (Unreleased)
 
 #### New Features
 
@@ -23,7 +23,7 @@ Full set of changes: [`Unreleased`](https://github.com/intelematics/bricklayer/c
 * Add schema code generation with Apache Avro specification.
 
 
-Full set of changes: [`Unreleased`](https://github.com/intelematics/bricklayer/compare/0.0.7...0.0.8)
+Full set of changes: [`0.0.7...0.0.8`](https://github.com/intelematics/bricklayer/compare/0.0.7...0.0.8)
 
 ## 0.0.7 (2021-08-20)
 
