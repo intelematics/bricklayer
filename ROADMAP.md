@@ -17,6 +17,10 @@ custom StructType templates.
 
 - Support generation of Swagger/Avro definition out of existing table schemas.
 
-- Support comparison of databricks table schema with Swagger/Avro definitions.
+- Support comparison of existing databricks schema with Swagger/Avro definitions.
 
-- Support testing for notebooks.
+- Help to transition from notebooks to code in modules/packages.
+
+- Export MLFlow artifacts to S3.
+
+- Add markdown rendering to AvroRecord.

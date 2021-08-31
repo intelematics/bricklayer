@@ -304,3 +304,22 @@ dbapi.import_notebook(
     '/Shared/backups/2021_09_02/mynotebook',
 )
 ```
+# Catalog
+
+Walk the databricks catalog programatically.
+```python
+from bricklayer.catalog.dbricks_catalog import DbricksCatalog
+for database in DbricksCatalog().get_databases():
+    for table in database.get_tables():
+        print(f'table_name={table.table_name}')
+        print(f'table_provider={table.table_provider}')
+        print(f'table_location={table.table_location}')
+        print(f'is_view={table.is_view}')
+```
+```
+table_name=weather
+table_provider=delta
+table_location=dbfs:/dbfs/delta/weather
+is_view=False
+table_created_time=Tue Aug 31 11:24:55 UTC 2021
+```
