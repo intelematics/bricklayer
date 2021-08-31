@@ -179,7 +179,7 @@ class AvroRecord:
             raise NotImplementedError(
                     f"Type {types} for field {fieldname} has not been implemented"
                     )
-        return T.StructField(fieldname, sparktype(),nullable=can_be_null)
+        return T.StructField(fieldname, sparktype(), nullable=can_be_null)
 
     def get_spark_struct(self):
         """Return a spark struct definition from the avro record definition"""
