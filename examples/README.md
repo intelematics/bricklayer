@@ -51,11 +51,12 @@ id	life_cycle_state	result_state	output
 1	61102	            TERMINATED	    SUCCESS	{'result': 'Random number=40 and param=None', ...
 2	61131	            TERMINATED	    SUCCESS	{'result': 'Random number=91 and param=None', ...
 ```
-Existing jobs can be retrieved using the job name and terminate their runs:
+Existing jobs can be retrieved to terminate their runs:
 ```python
-for job in DBSApi().list_jobs(job_name='dummy_job'):
-    print(job.job_id)
-    job.stop()
+for job in DBSApi().list_jobs():
+    if job.name == 'bad_job':
+        print('stopping runs for job:', job.job_id)
+        job.stop()
 ```
 Parameters can be passed to jobs:
 ```python

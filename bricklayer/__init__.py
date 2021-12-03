@@ -3,6 +3,8 @@ import logging
 import sys
 from logging import NullHandler
 
+from .__version__ import __version__
+
 # Set default logging handler to avoid "No handler found" warnings.
 logging.getLogger(__name__).addHandler(NullHandler())
 logging.getLogger("py4j").setLevel(logging.ERROR)

@@ -77,6 +77,26 @@ class DBJob(object):
         self._client = client
         self.runs = []
 
+    @property
+    def data(self):
+        '''Return the data from the raw JobApi call'''
+        return JobsApi(self._client).get_job(self.job_id)
+
+    @property
+    def name(self):
+        return self.data['settings']['name']
+
+    @property
+    def notebook_task(self):
+        return self.data['settings']['notebook_task']
+
+    def __repr__(self):
+        return f'{self.__class__.__name__}:{self.job_id}'
+
+    @property
+    def existing_cluster_id(self):
+        return self.data['settings']['existing_cluster_id']
+
     def run_now(self, jar_params=None, notebook_params=None, python_params=None,
                     spark_submit_params=None):
         """Run this job.
@@ -298,14 +318,15 @@ class DBSApi(object):
                         job_name in job['settings']['name'],
                         _jobs
                 ))
-
-        if job_id:
+        elif job_id:
             result = list(
                 filter(
                     lambda job:
                         job_id in job['job_id'],
                         _jobs
                 ))
+        else:
+            result = _jobs
 
         for jobdata in result:
             job = DBJob(
