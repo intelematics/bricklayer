@@ -113,7 +113,7 @@ class DBSApi(object):
         self,
         token=None,
         host=None,
-        apiVersion='2.0',
+        api_version='2.0',
     ):
         if token is None:
             token = get_notebook_context().get_api_token()
@@ -123,7 +123,7 @@ class DBSApi(object):
 
         self._client = ApiClient(
                             host=host,
-                            apiVersion=apiVersion,
+                            api_version=api_version,
                             token=token
                             )
 
