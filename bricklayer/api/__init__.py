@@ -322,7 +322,7 @@ class DBSApi(object):
             result = list(
                 filter(
                     lambda job:
-                        job_id in job['job_id'],
+                        job_id == job['job_id'],
                         _jobs
                 ))
         else:
@@ -336,3 +336,10 @@ class DBSApi(object):
             jobs.append(job)
 
         return jobs
+
+    def delete_job(self, job_id):
+        """delete the created job based on job_id
+        """
+        if job_id is not None:
+            JobsApi(self._client).delete_job(job_id)
+        
