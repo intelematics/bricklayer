@@ -3,7 +3,7 @@
     Results end up in a table
     Usage:
     ```
-    import file_scanner
+    from file_scanner import DbricksFileScanner
     # define the aws_bucket and output_dir for the s3_fetch to start
     aws_bucket = "dev-trips-service-trips-intelematics"
     output_dir = "/tmp/"
