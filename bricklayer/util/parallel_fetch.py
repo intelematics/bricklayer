@@ -4,14 +4,14 @@
     Results end up in a table
     Usage:
     ```
-    from file_scanner import DbricksFileScanner
+    from parallel_fetch import DbricksParallelFetch
     # define the aws_bucket and output_dir for the s3_fetch to start
     aws_bucket = "service-trips"
     output_dir = "/tmp/"
     # define the target df awaiting to be parse the path
     df = Spark.createDataFrame()
     # export the fetched contents dataframe
-    output_df = DbricksFileScanner.download_file(df, aws_bucket, output_dir, path_column)
+    output_df = DbricksParallelFetch.download_file(df, aws_bucket, output_dir, path_column)
     ```
 """
 from concurrent.futures import ThreadPoolExecutor, as_completed
@@ -24,7 +24,7 @@ import boto3
 import csv
 
 
-class DbricksFileScanner:
+class DbricksParallelFetch:
     @staticmethod
     def download_file(df: DataFrame, aws_bucket: str, output_dir: str, path_column: str, max_workers: int = 32):
         """encapsulate the pandas udf function as a static method
