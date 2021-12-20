@@ -154,7 +154,7 @@ class Layer():
 class HeatMapLayer(Layer):
     '''Add a heat map layer to be rendered to the map'''
 
-    def __init__(self, data, name, geometry_col=None, radius=10, blur=10, min_opacity=1, gradient={0.4: 'blue', 0.65: 'lime', 1: 'red'}):
+    def __init__(self, data, name=None, geometry_col=None, radius=10, blur=10, min_opacity=1, gradient={0.4: 'blue', 0.65: 'lime', 1: 'red'}):
         """
             Args:
                 data (*): pandas dataframe, or a geodataframe or a spark dataframe or a databricks SQL query.
