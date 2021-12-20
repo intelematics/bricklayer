@@ -8,7 +8,6 @@ import pandas as pd
 import folium
 from folium.plugins import HeatMap
 
-
 import shapely.wkt as wkt
 import shapely.geometry
 import shapely.geometry.base
@@ -151,6 +150,7 @@ class Layer():
             map_geom = self.get_map_geom(row)
             map_geom.add_to(folium_map)
 
+
 class HeatMapLayer(Layer):
     '''Add a heat map layer to be rendered to the map'''
 
@@ -200,6 +200,7 @@ class HeatMapLayer(Layer):
             radius=self.radius
         )
         heat_map_layer.add_to(folium_map)
+
         
 class Map():
     '''Map that can render layers'''
