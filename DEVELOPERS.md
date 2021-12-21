@@ -8,6 +8,7 @@ Some brief guidance for developers on this repository
 - Update `CHANGELOG.md`
 - Update `bricklayer/__version__.py`
 - Update package dependencies in `setup.py` (if required)
+- Update documentation e.g. examples of new features in `examples/README.md`
 - Test wheel build
 - Pull request, obtain approval & merge to master
   - GitHub will run an action which builds the wheel and generates a draft release
