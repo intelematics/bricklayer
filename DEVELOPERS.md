@@ -11,8 +11,7 @@ Some brief guidance for developers on this repository
 - Update documentation e.g. examples of new features in `examples/README.md`
 - Test wheel build
 - Pull request, obtain approval & merge to master
-  - GitHub will run an action which builds the wheel and generates a draft release
-- Publish release (in github repo "releases" section)
+  - GitHub will run an action which builds the wheel, generates a release and publishes it
 
 ## Wheel testing
 A test wheel can be built (appearing in the `dist` folder) with
