@@ -1,7 +1,9 @@
-[Concurrent Jobs](#concurrent_jobs) |
+| [Concurrent Jobs](#concurrent_jobs) |
 [Easy map rendering](#map) |
 [Schema to spark table generator](#schema) |
-[Copy/Backup notebook runs in the workspace](#workspace)
+[Copy/Backup notebook runs in the workspace](#workspace) |
+[Catalog](#catalog) |
+[Parallel Fetch](#parallel_fetch) |
 
 
 # Concurrent Jobs <a name="concurrent_jobs"/>
@@ -20,6 +22,11 @@ Out[3]: 60286
 Stop the job.
 ```python
 job.stop()
+```
+Delete the job.
+```python
+job_id = job.job_id
+DBSApi().delete_job(job_id)
 ```
 Can also reference a notebook with a relative path to the current notebook.
 ```python
@@ -305,7 +312,7 @@ dbapi.import_notebook(
     '/Shared/backups/2021_09_02/mynotebook',
 )
 ```
-# Catalog
+# Catalog <a name="catalog"/>
 
 Walk the databricks catalog programatically.
 ```python
@@ -323,4 +330,38 @@ table_provider=delta
 table_location=dbfs:/dbfs/delta/weather
 is_view=False
 table_created_time=Tue Aug 31 11:24:55 UTC 2021
+```
+# Parallel Fetch <a name="parallel_fetch"/>
+
+Walk the databricks file scanner programatically.
+```python
+from bricklayer.util.parallel_fetch import DbricksParallelFetch
+
+aws_bucket = "trips-service"
+output_dir = "/tmp/"
+
+import subprocess
+from datetime import datetime
+import pyspark.sql.functions as F
+import pandas as pd
+
+files_df = spark.createDataFrame(pd.DataFrame([{'datetime': datetime.fromisoformat(n[0:19]),
+  'size': int(n[19:30]),
+  'path': n[31:]
+  }
+ for n in subprocess.check_output(
+    ['aws',
+     's3',
+     'ls',
+     '--recurs',
+     's3://trips-service/TEST/']).decode('WINDOWS-1252').split('\n')[:-1] ]))
+# pick up the path column and will return a new dataframe with parsed contents
+res = DbricksParallelFetch.download_file(files_df, aws_bucket, output_dir, 'path')
+res.display()
+```
+```
+datetime	                size	path			downloaded_content
+2020-08-04T01:54:57.000+0000	2460	TEST/0D31EEB4/trip.json	{"reportedTimestamp":"", ...}
+2020-08-14T08:54:57.000+0000  	2200	TEST/1C0ACA63/trip.json	{"accuracy":1,"validity":1, ...}
+2020-08-24T11:54:57.000+0000	2299	TEST/20DD063D/trip.json	{"startFuelLevel":50.00, ...}
 ```
