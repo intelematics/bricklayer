@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.0.14
+
+#### New Features
+* Add support for rendering Heatmaps
+
 ## 0.0.9 (Unreleased)
 
 #### New Features
