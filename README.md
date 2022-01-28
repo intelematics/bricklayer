@@ -6,7 +6,7 @@ A Databricks utility for data engineers whose job is to farm jobs, build map lay
 
 ```
 
-pip install https://github.com/intelematics/bricklayer/releases/download/0.0.12/bricklayer-0.0.12-py3-none-any.whl
+pip install https://github.com/intelematics/bricklayer/releases/download/0.0.13/bricklayer-0.0.13-py3-none-any.whl
 ```
 
 ## Usage
