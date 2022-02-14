@@ -6,6 +6,7 @@ from pyspark.sql import SparkSession
 
 import pandas as pd
 import folium
+from folium.plugins import HeatMap
 
 import shapely.wkt as wkt
 import shapely.geometry
@@ -77,11 +78,11 @@ class Layer():
             return dataframe
         if isinstance(geom, shapely.geometry.base.BaseGeometry):
             return dataframe
-        raise ValueError(f"Invalida type for geometry_colum in the data ({type(geom)})")
+        raise ValueError(f"Invalid type for geometry_colum in the data ({type(geom)})")
 
-    def get_centroid(self, datafraame: pd.DataFrame, geometry_col: str):
+    def get_centroid(self, dataframe: pd.DataFrame, geometry_col: str):
         '''Get the centroid of all the geometries in the layer'''
-        centroids = [r.centroid for _, r in datafraame[geometry_col].items()]
+        centroids = [r.centroid for _, r in dataframe[geometry_col].items()]
         multipoint = shapely.geometry.MultiPoint(centroids)
         return multipoint.centroid
 
@@ -149,6 +150,58 @@ class Layer():
             map_geom = self.get_map_geom(row)
             map_geom.add_to(folium_map)
 
+
+class HeatMapLayer(Layer):
+    '''Add a heat map layer to be rendered to the map'''
+
+    def __init__(self, data, name=None, geometry_col=None, radius=10, blur=10, min_opacity=1, gradient={0.4: 'blue', 0.65: 'lime', 1: 'red'}):
+        """
+            Args:
+                data (*): pandas dataframe, or a geodataframe or a spark dataframe or a databricks SQL query.
+                geometry_col (str): The name of the column where the lat-long or linestring geometry is contained
+                radius (int): The radius of each "point" of the heatmap
+                blur (int): Amount of blur in each point
+                min_opacity (int): The minimum opacity the heat will start at
+                gradient (dict): Color gradient config
+
+            Returns:
+                folium.Map: Folium map to be rendered.
+        """
+        dataframe = Layer.get_dataframe(self, data)
+        if dataframe.empty:
+            raise ValueError('No data to display')
+        self.geometry_col = Layer.get_geometry_col(self, geometry_col, dataframe)
+        self.dataframe = Layer.get_dataframe_with_geom(self, dataframe, self.geometry_col)
+        self.centroid = Layer.get_centroid(self, self.dataframe, self.geometry_col)
+        self.name = name
+        self.blur = blur
+        self.min_opacity = min_opacity
+        self.gradient = gradient
+        self.radius = radius
+
+    def get_coord_list(self):
+        ''' Converts the geometry column shapely objects into a list of lat-long 2-tuples '''
+        coord_list = []
+        for _, row in self.dataframe.iterrows():
+            geometry = row[self.geometry_col].coords
+            coords = [(y, x) for x, y in geometry]
+            coord_list = coord_list + coords
+        return coord_list
+
+    def render_to_map(self, folium_map):
+        ''' Render the layer into the map '''
+        coord_list = self.get_coord_list()
+        heat_map_layer = HeatMap(
+            coord_list, 
+            name=self.name,
+            blur=self.blur,
+            min_opacity=self.min_opacity,
+            gradient=self.gradient,
+            radius=self.radius
+        )
+        heat_map_layer.add_to(folium_map)
+
+        
 class Map():
     '''Map that can render layers'''
 

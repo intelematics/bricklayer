@@ -146,6 +146,14 @@ Map([
 Then click over the features can render a pop-up with the attributes values for the given feature.
 ![map_demo1](map_demo2.png)
 
+Heatmap layers can also be rendered much like a normal layer.
+```python
+map_hooray = Map([ 
+  HeatMapLayer(gpd.read_file('https://opendata.arcgis.com/datasets/1f3cb954526b471596dbffa30e56bb32_0.geojson')), 
+]).render()
+```
+![heatmap_demo1](map_demo3.png)
+
 # Schema to spark table generator<a name="schema"/>
 Schema can be defined in Apache Avro record format or OpenAPI. By using `bricklayer.catalog.schema.avro` a spark table creation script is generator and ready for execution.
 
@@ -331,6 +339,7 @@ table_location=dbfs:/dbfs/delta/weather
 is_view=False
 table_created_time=Tue Aug 31 11:24:55 UTC 2021
 ```
+
 # Parallel Fetch <a name="parallel_fetch"/>
 
 Walk the databricks file scanner programatically.

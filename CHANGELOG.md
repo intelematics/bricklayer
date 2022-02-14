@@ -5,6 +5,7 @@
 #### New Features
 
 * Add many files solution aiming to highly partitioned data
+* Add support for rendering Heatmaps
 
 #### Docs
 
